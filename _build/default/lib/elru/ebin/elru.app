@@ -1,0 +1,11 @@
+{application,elru,
+             [{description,"An OTP application"},
+              {vsn,"0.1.0"},
+              {registered,[]},
+              {mod,{elru_app,[]}},
+              {applications,[kernel,stdlib]},
+              {env,[]},
+              {modules,[elru,elru_app,elru_srv,elru_sup]},
+              {maintainers,[]},
+              {licenses,["Apache 2.0"]},
+              {links,[]}]}.
