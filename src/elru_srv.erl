@@ -17,31 +17,42 @@ init([]) ->
     {ok, {}}.
 
 handle_call({new , MaxSize}, _From, _State) ->
-    {reply, ok, {ets:new(elru, [set]), MaxSize}};
-handle_call({add, Module, Func, List_Args}, _From, {Id, MaxSize}) ->
+    {reply, ok, {ets:new(elru, [set]),0 ,MaxSize}};
+handle_call({add, Module, Func, List_Args}, _From, {Id, Count, MaxSize}) ->
     Bin = erlang:term_to_binary([Module, Func, List_Args]),
     Hash = crypto:hash(md5, Bin),
     case ets:lookup(Id, Hash) of
-        [{Key, Value}] ->
+        [{Key, {_ValCount,Value}}] ->
             ets:delete(Id, Key),
-            ets:insert(Id, {Key, Value}),
-            {reply, Value, {Id, MaxSize}};
+            ets:insert(Id, {Key,{Count, Value}}),
+            {reply, Value, {Id,Count + 1 ,MaxSize}};
         _ -> 
             Res = Module:Func(List_Args),
-            ets:insert(Id, {Hash, Res}),
+            ets:insert(Id, {Hash, {Count, Res}}),
             gen_server:cast(?MODULE, {check_size}),
-            {reply, Res, {Id, MaxSize}}
+            {reply, Res, {Id, Count + 1, MaxSize}}
     end.
 
-handle_cast({check_size}, {Id, MaxSize}) ->
+handle_cast({check_size}, {Id, Count, MaxSize}) ->
     Size = ets:info(Id, size),
     if 
         Size > MaxSize ->
-            Key = ets:last(Id),
+            List = ets:tab2list(Id),
+            Key = minimum(List),
             Val = ets:lookup(Id, Key),
             ets:delete(Id, Key),
             ?LOG("Delete ~p",[Val]),
-            {noreply, {Id, MaxSize}};
+            {noreply, {Id, Count, MaxSize}};
         true -> 
-            {noreply, {Id, MaxSize}}
+            {noreply, {Id, Count, MaxSize}}
     end.
+
+minimum([H|T]) ->
+    minimum(H,T).
+minimum({Key,{Count,Val}}, [{NewKey,{NewCount,NewVal}}|T]) ->
+    case Count < NewCount of
+        true -> minimum({Key,{Count,Val}},T);
+        false -> minimum({NewKey,{NewCount,NewVal}},T)
+    end;
+minimum({Key,{_Count,_}}, []) ->
+    Key. 
