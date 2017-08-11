@@ -5,7 +5,7 @@
               {mod,{elru_app,[]}},
               {applications,[kernel,stdlib]},
               {env,[]},
-              {modules,[elru,elru_app,elru_srv,elru_sup]},
+              {modules,[elru,elru_app,elru_srv,elru_sup,test]},
               {maintainers,[]},
               {licenses,["Apache 2.0"]},
               {links,[]}]}.
