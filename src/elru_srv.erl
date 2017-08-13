@@ -39,9 +39,7 @@ handle_cast({check_size}, {Id, Count, MaxSize}) ->
         Size > MaxSize ->
             List = ets:tab2list(Id),
             Key = minimum(List),
-            Val = ets:lookup(Id, Key),
             ets:delete(Id, Key),
-            ?LOG("Delete ~p",[Val]),
             {noreply, {Id, Count, MaxSize}};
         true -> 
             {noreply, {Id, Count, MaxSize}}

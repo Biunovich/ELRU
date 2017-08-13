@@ -1,6 +1,6 @@
 {application, elru,
- [{description, "An OTP application"},
-  {vsn, "0.1.0"},
+ [{description, "Implements LRU cache in Erlang OTP application"},
+  {vsn, "1.1.0"},
   {registered, []},
   {mod, { elru_app, []}},
   {applications,
@@ -10,7 +10,7 @@
   {env,[]},
   {modules, []},
 
-  {maintainers, []},
+  {maintainers, ["Dylgyrzhapov Buin"]},
   {licenses, ["Apache 2.0"]},
-  {links, []}
+  {links, [{"Github", "https://github.com/Biunovich/ELRU"}]}
  ]}.
