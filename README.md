@@ -6,7 +6,7 @@ This application store results of functions in ets based database. It calculate 
 
 Add in rebar.config file :
 ```erlang
-{elru, "1.0.0"}
+{elru, "1.1.0"}
 ```
 Then create new LRU cache :
 ```erlang
